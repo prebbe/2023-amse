@@ -174,4 +174,7 @@ A dataset describing the number and types of newly-registered vehicles in german
 3. Visualize the distribution of different drives since the year 2018 [#3](https://github.com/prebbe/2023-amse/issues/3)
 4. Analyze the regional differences in the distribution of alternative and traditional drives since 2021 [#4](https://github.com/prebbe/2023-amse/issues/4)
 5. Visualize the regional differences in the distribution of alternative and traditional drives since 2021 [#5](https://github.com/prebbe/2023-amse/issues/5)
-6. ...
+6. Create Automated Tests [#6](https://github.com/prebbe/2023-amse/issues/6)
+7. Create a CI pipeline [#7](https://github.com/prebbe/2023-amse/issues/7)
+8. Deploy the project [#8](https://github.com/prebbe/2023-amse/issues/8)
+
