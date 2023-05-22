@@ -1,0 +1,91 @@
+pipeline AirportPipeline {
+    constraint IataConstraint oftype LengthConstraint {
+        minLength: 0;
+        maxLength: 3;
+    }
+
+    valuetype Iata oftype text {
+        constraints: [IataConstraint];
+    }
+    
+    constraint IcaoConstraint oftype LengthConstraint {
+        minLength: 0;
+        maxLength: 4;
+    }
+
+    valuetype Icao oftype text {
+        constraints: [IcaoConstraint];
+    }
+
+    constraint DstConstraint oftype AllowlistConstraint {
+        allowlist: ["E", "A", "S", "O", "Z", "N", "U"];
+    }
+
+    valuetype Dst oftype text {
+        constraints: [DstConstraint];
+    }
+
+    constraint TimezoneConstraint oftype RangeConstraint {
+        lowerBound: -12;
+        upperBound: 12;
+    }
+
+    valuetype Timezone oftype decimal {
+        constraints: [TimezoneConstraint];
+    }
+
+    block AirportExtractor oftype HttpExtractor {
+        url: "https://opendata.rhein-kreis-neuss.de/api/v2/catalog/datasets/rhein-kreis-neuss-flughafen-weltweit/exports/csv";
+    }
+
+    pipe {
+        from: AirportExtractor;
+        to: AirportTextFileInterpreter;
+    }
+
+    block AirportTextFileInterpreter oftype TextFileInterpreter {}
+
+    pipe {
+        from: AirportTextFileInterpreter;
+        to: AirportCsvInterpreter;
+    }
+
+    block AirportCsvInterpreter oftype CSVInterpreter {
+        delimiter: ";";
+    }
+
+    pipe {
+        from: AirportCsvInterpreter;
+        to: AirportTableInterpreter;
+    }
+
+    block AirportTableInterpreter oftype TableInterpreter {
+        header: false;
+        columns: [
+            "Airport ID" oftype integer,
+            "Name" oftype text,
+            "City" oftype text,
+            "Country" oftype text,
+            "IATA" oftype Iata,
+            "ICAO" oftype Icao,
+            "Latitude" oftype decimal,
+            "Longitude" oftype decimal,
+            "Altitude" oftype integer,
+            "Timezone" oftype Timezone,
+            "DST" oftype Dst,
+            "Tz" oftype text,
+            "Geopoint" oftype text,
+        ];
+    }
+
+    pipe {
+        from: AirportTableInterpreter;
+        to: AirportSqliteExporter;
+    }
+
+    block AirportSqliteExporter oftype SQLiteLoader {
+        table: "airports";
+        file: "./airports.sqlite";
+    }
+
+}
